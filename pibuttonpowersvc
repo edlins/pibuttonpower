@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          buttonshutdown-daemon
+# Provides:          pibuttonpowersvc
 # Required-Start:    $local_fs $syslog $all
 # Required-Stop:     $local_fs $syslog
 # Default-Start:     2 3 4 5
@@ -10,12 +10,13 @@
 #                    the Raspberry Pi.
 ### END INIT INFO
 
+# Modified by: Scott Edlin
 # Author: Sanjeev Sharma <http://sanje2v.wordpress.com/>
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Allows using push button to shutdown/restart Raspberry Pi"
-NAME=buttonshutdown-daemon
+NAME=pibuttonpowersvc
 DAEMON=/usr/sbin/$NAME
 #DAEMON_ARGS="--options args"
 PIDFILE=/var/run/$NAME.pid

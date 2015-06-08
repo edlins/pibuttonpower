@@ -24,8 +24,8 @@ License: Freeware
 
 #define DAEMON_NAME		"buttonshutdown-daemon"
 #define PID_FILE		"/var/run/" DAEMON_NAME ".pid"
-#define PIN			0	/* This is wiringPi pin 0 which is physical pin 8 */
-#define PIN_STR			"0"
+#define PIN			26	/* This is wiringPi pin 0 which is physical pin 8 */
+#define PIN_STR			"26"
 
 
 /* Function prototypes */
@@ -133,8 +133,8 @@ int main(int argc, char *argv[])
 
 	/* Setup pin mode and interrupt handler */
 	pinMode(PIN, INPUT);
-	pullUpDnControl(PIN, PUD_DOWN);
-	if (wiringPiISR(PIN, INT_EDGE_RISING, &Button_Pressed) == -1)
+	pullUpDnControl(PIN, PUD_UP);
+	if (wiringPiISR(PIN, INT_EDGE_FALLING, &Button_Pressed) == -1)
 	{
 	   syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");
 	   exit(EXIT_FAILURE);
@@ -178,7 +178,7 @@ void Button_Pressed(void)
 
 	switch (digitalRead(PIN))
 	{
-		case LOW:	// Shutdown requested
+		case HIGH:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");
 
 		    if (execl("/sbin/poweroff", "poweroff", NULL) == -1)
@@ -188,7 +188,7 @@ void Button_Pressed(void)
 
 		    break;
 
-		case HIGH:	// Restart requested
+		case LOW:	// Restart requested
 		    syslog(LOG_INFO, "Restarting system");
 
 		    if (execl("/sbin/shutdown", "shutdown", "-r", "now", NULL) == -1)

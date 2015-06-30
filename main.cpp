@@ -22,10 +22,12 @@ License: Freeware
 #include <wiringPi.h>
 
 
-#define DAEMON_NAME		"buttonshutdown-daemon"
+#define DAEMON_NAME		"pibuttonpower"
 #define PID_FILE		"/var/run/" DAEMON_NAME ".pid"
-#define PIN			26	/* This is wiringPi pin 0 which is physical pin 8 */
-#define PIN_STR			"26"
+//#define PIN			26	/* This is wiringPi pin 0 which is physical pin 8 */
+//#define PIN_STR			"26"
+char *pinstr;
+int pinnum;
 
 
 /* Function prototypes */
@@ -37,10 +39,37 @@ void Button_Pressed(void);
 /* ------------------ Start Here ----------------------- */
 int main(int argc, char *argv[])
 {
+        /* command line arg */
+        int c;
+        while ((c = getopt(argc, argv, "p:")) != -1) {
+          int this_optind = optind ? optind : 1;
+          switch (c) {
+            case 'p':
+              pinstr = optarg;
+              pinnum = strtol(pinstr, NULL, 10);
+              break;
+            case '?':
+              if (optopt == 'c')
+                fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+              return 1;
+            default:
+              abort();
+            } // switch
+          } // while
+        if (pinstr == NULL) {
+          fprintf(stderr, "Error: pin must be specified with -p <wiringPiPin>\n");
+          return 1;
+        } // unless
+        if ((pinnum < 1) || (pinnum > 31)) {
+          fprintf(stderr, "Error: pin %d is not between 1 and 20\n", pinnum);
+          return 1;
+        }
+        //printf("Starting daemon on pin %d\n", pinnum);
+
 	/* Logging */
         setlogmask(LOG_UPTO(LOG_INFO));
         openlog(DAEMON_NAME, LOG_CONS | LOG_PERROR, LOG_USER);
-        syslog(LOG_INFO, "Daemon starting up");
+        syslog(LOG_INFO, "Daemon starting up on pin %d", pinnum);
 
 	/* This daemon can only run as root. So make sure that it is. */
 	if (geteuid() != 0)
@@ -132,9 +161,10 @@ int main(int argc, char *argv[])
 	}
 
 	/* Setup pin mode and interrupt handler */
-	pinMode(PIN, INPUT);
-	pullUpDnControl(PIN, PUD_UP);
-	if (wiringPiISR(PIN, INT_EDGE_FALLING, &Button_Pressed) == -1)
+	pinMode(pinnum, INPUT);
+        syslog(LOG_INFO, "setting pinMode on %d\n", pinnum);
+	pullUpDnControl(pinnum, PUD_UP);
+	if (wiringPiISR(pinnum, INT_EDGE_FALLING, &Button_Pressed) == -1)
 	{
 	   syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");
 	   exit(EXIT_FAILURE);
@@ -171,12 +201,18 @@ void Button_Pressed(void)
 	/* NOTE: Unfortunately, 'wiringPi' library doesn't support
 		unhooking an existing interrupt handler, so we need
 		to use 'gpio' binary to do this according to the author */
-	system("/usr/local/bin/gpio edge " PIN_STR " none");
+        char command[128];
+        strcpy(command, "/usr/local/bin/gpio edge ");
+        strcat(command, pinstr);
+        strcat(command, " none");
+        //printf("command = %s\n", command);
+        //syslog(LOG_INFO, command);
+	system(command);
 
 	/* Just wait for user to press the button */
 	sleep(2);
 
-	switch (digitalRead(PIN))
+	switch (digitalRead(pinnum))
 	{
 		case HIGH:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");

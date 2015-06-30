@@ -15,10 +15,10 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Allows using push button to shutdown/restart Raspberry Pi"
+DESC="Daemon to shutdown/restart pi using a button"
 NAME=pibuttonpower
 DAEMON=/usr/sbin/$NAME
-#DAEMON_ARGS="--options args"
+DAEMON_ARGS="-p 26"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 

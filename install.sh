@@ -1,4 +1,5 @@
 #!/bin/bash
-sudo cp pibuttonpowersvc /etc/init.d
-sudo chmod 755 /etc/init.d/pibuttonpowersvc
-sudo update-rc.d pibuttonpowersvc defaults
+cp pibuttonpower /usr/sbin
+cp init.d/pibuttonpower /etc/init.d
+chmod 755 /etc/init.d/pibuttonpower
+update-rc.d pibuttonpower defaults

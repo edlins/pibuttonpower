@@ -1,0 +1,32 @@
+# post-install.txt style script for raspbian-ua-netinst
+
+echo ""
+echo "=== Adding pibuttonpower ==="
+# download wiringPi
+echo ""
+echo "= Cloning wiringPi"
+chroot /rootfs /usr/bin/git clone git://git.drogon.net/wiringPi /usr/local/src/wiringPi
+
+# build and install wiringPi
+echo ""
+echo "= Building and installing wiringPi"
+chroot /rootfs /bin/sh <<'EOFwiringPi'
+cd /usr/local/src/wiringPi
+./build
+EOFwiringPi
+
+# download pibuttonpower
+echo ""
+echo "= Cloning pibuttonpower"
+chroot /rootfs /usr/bin/git clone git://github.com/edlins/pibuttonpower /usr/local/src/pibuttonpower
+
+# build and install pibuttonpower
+chroot /rootfs /bin/sh <<'EOFpibuttonpower'
+cd /usr/local/src/pibuttonpower
+echo ""
+echo "= Building pibuttonpower"
+./build.sh
+echo ""
+echo "= Installing pibuttonpower"
+./install.sh
+EOFpibuttonpower

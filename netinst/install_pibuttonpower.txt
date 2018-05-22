@@ -11,6 +11,8 @@ echo $?
 sync
 cat /bootfs/cmdline.txt
 
+sh
+
 # install sudo
 echo ""
 echo "= Adding sudo"

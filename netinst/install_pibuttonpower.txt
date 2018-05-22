@@ -4,7 +4,12 @@ echo ""
 echo "=== Adding pibuttonpower ==="
 
 # setup kernel option to allow wiringPiSetup() to pass
+echo ""
+echo "= Adding iomem=relaxed"
 sed -i '1{s/$/ iomem=relaxed/}' /bootfs/cmdline.txt
+echo $?
+sync
+cat /bootfs/cmdline.txt
 
 # install sudo
 echo ""

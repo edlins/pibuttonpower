@@ -3,6 +3,9 @@
 echo ""
 echo "=== Adding pibuttonpower ==="
 
+# setup kernel option to allow wiringPiSetup() to pass
+sed -i '1{s/$/ iomem=relaxed/}' /bootfs/boot/cmdline.txt
+
 # install sudo
 echo ""
 echo "= Adding sudo"

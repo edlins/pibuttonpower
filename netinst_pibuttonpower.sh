@@ -1,0 +1,40 @@
+# post-install.txt style script for raspbian-ua-netinst
+
+echo ""
+echo "=== Adding pibuttonpower ==="
+
+# setup kernel option to allow wiringPiSetup() to pass
+echo ""
+echo "= Adding iomem=relaxed"
+sed -i '1{s/$/ iomem=relaxed/}' /boot/cmdline.txt
+cat /boot/cmdline.txt
+
+# install sudo
+echo ""
+echo "= Adding sudo"
+/usr/bin/apt-get -y --no-install-recommends install sudo
+
+# download wiringPi
+echo ""
+echo "= Cloning wiringPi"
+/usr/bin/git clone git://git.drogon.net/wiringPi /usr/local/src/wiringPi
+
+# build and install wiringPi
+echo ""
+echo "= Building and installing wiringPi"
+cd /usr/local/src/wiringPi
+./build
+
+# download pibuttonpower
+echo ""
+echo "= Cloning pibuttonpower"
+/usr/bin/git clone git://github.com/edlins/pibuttonpower /usr/local/src/pibuttonpower
+
+# build and install pibuttonpower
+cd /usr/local/src/pibuttonpower
+echo ""
+echo "= Building pibuttonpower"
+./build.sh
+echo ""
+echo "= Installing pibuttonpower"
+./install.sh

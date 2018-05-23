@@ -16,6 +16,16 @@ echo ""
 echo "= Adding sudo"
 /usr/bin/apt-get -y --no-install-recommends install sudo
 
+# install make
+echo ""
+echo "= Adding make"
+/usr/bin/apt-get -y --no-install-recommends install make
+
+# install g++
+echo ""
+echo "= Adding g++"
+/usr/bin/apt-get -y --no-install-recommends install g++
+
 # download wiringPi
 echo ""
 echo "= Cloning wiringPi"

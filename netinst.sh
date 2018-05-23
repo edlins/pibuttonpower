@@ -1,4 +1,6 @@
-# post-install.txt style script for raspbian-ua-netinst
+#!/bin/sh
+# executed by `post-install.txt` as `chroot /rootfs netinst.sh
+# executed by user as `sudo ./netinst.sh`
 
 echo ""
 echo "=== Adding pibuttonpower ==="

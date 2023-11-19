@@ -4,6 +4,7 @@ buttonshutdown-daemon - When the push button connected to wiringPi GPIO pin 0 is
    for 2 secs or longer, a restart is initiated.
 
 Written By: Sanjeev Sharma (http://sanje2v.wordpress.com/)
+Modified By: Scott Edlin https://github.com/edlins
 License: Freeware
 */
 
@@ -157,12 +158,8 @@ int main(int argc, char *argv[])
    }
 
    /* Setup pin mode and interrupt handler */
-   //	pinMode(pinnum, INPUT);
    gpioSetMode(pinnum, PI_INPUT);
-   syslog(LOG_INFO, "setting pinMode on %d\n", pinnum);
-   //	pullUpDnControl(pinnum, PUD_UP);
    gpioSetPullUpDown(pinnum, PI_PUD_UP);
-   //	if (wiringPiISR(pinnum, INT_EDGE_FALLING, &Button_Pressed) == -1)
    if (gpioSetAlertFunc(pinnum, Button_Pressed) != 0)
    {
       syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");

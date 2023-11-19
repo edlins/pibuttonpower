@@ -26,16 +26,12 @@ echo ""
 echo "= Adding g++"
 /usr/bin/apt-get -y --no-install-recommends install g++
 
-# # download wiringPi
-# echo ""
-# echo "= Cloning wiringPi"
-# /usr/bin/git clone git://git.drogon.net/wiringPi /usr/local/src/wiringPi
-
-# # build and install wiringPi
-# echo ""
-# echo "= Building and installing wiringPi"
-# cd /usr/local/src/wiringPi
-# ./build
+# download, unzip, build, and install pigpio
+wget https://github.com/joan2937/pigpio/archive/master.zip
+unzip master.zip
+cd pigpio-master
+make
+make install
 
 # download pibuttonpower
 echo ""

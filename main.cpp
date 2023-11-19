@@ -31,7 +31,7 @@ int pinnum;
 
 /* Function prototypes */
 void Daemon_Stop(int signum);
-void Button_Pressed(void);
+void Button_Pressed(int gpio, int level, uint32_t tick);
 
 /* ------------------ Start Here ----------------------- */
 int main(int argc, char *argv[])
@@ -181,13 +181,16 @@ int main(int argc, char *argv[])
 
    /* Setup pin mode and interrupt handler */
    //	pinMode(pinnum, INPUT);
-   // syslog(LOG_INFO, "setting pinMode on %d\n", pinnum);
+   gpioSetMode(pinnum, PI_INPUT);
+   syslog(LOG_INFO, "setting pinMode on %d\n", pinnum);
    //	pullUpDnControl(pinnum, PUD_UP);
+   gpioSetPullUpDown(pinnum, PI_PUD_UP);
    //	if (wiringPiISR(pinnum, INT_EDGE_FALLING, &Button_Pressed) == -1)
-   //	{
-   //	   syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");
-   //	   exit(EXIT_FAILURE);
-   //	}
+   if (gpioSetAlertFunc(pinnum, Button_Pressed) != 0)
+   {
+      syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");
+      exit(EXIT_FAILURE);
+   }
 
    /*
 The Big Loop
@@ -215,7 +218,7 @@ void Daemon_Stop(int signum)
    exit(EXIT_SUCCESS);
 }
 
-void Button_Pressed(void)
+void Button_Pressed(int gpio, int level, uint32_t tick)
 {
    /* Handle button pressed interrupts */
 
@@ -223,37 +226,38 @@ void Button_Pressed(void)
    /* NOTE: Unfortunately, 'wiringPi' library doesn't support
       unhooking an existing interrupt handler, so we need
       to use 'gpio' binary to do this according to the author */
-   char command[128];
-   strcpy(command, "/usr/local/bin/gpio edge ");
-   strcat(command, pinstr);
-   strcat(command, " none");
-   syslog(LOG_INFO, "command = %s\n", command);
+   //char command[128];
+   //strcpy(command, "/usr/local/bin/gpio edge ");
+   //strcat(command, pinstr);
+   //strcat(command, " none");
+   //syslog(LOG_INFO, "command = %s\n", command);
    // syslog(LOG_INFO, command);
    //	system(command);
+   gpioSetAlertFunc(pinnum, NULL);
 
    /* Just wait for user to press the button */
    sleep(2);
 
    //	switch (digitalRead(pinnum))
-   //	{
-   //		case HIGH:	// Shutdown requested
-   //		    syslog(LOG_INFO, "Shutting down system");
-
+   switch (gpioRead(pinnum)) {
+      case PI_HIGH:
+         syslog(LOG_INFO, "Shutting down system");
+         break;
    //		    if (execl("/sbin/poweroff", "poweroff", NULL) == -1)
    //			syslog(LOG_ERR, "'poweroff' program failed to run with error: %d", errno);
-
    // NOTE: Execution will not reach here if 'execl()' succeeds
-
-   //		    break;
+          //break;
 
    //		case LOW:	// Restart requested
-   //		    syslog(LOG_INFO, "Restarting system");
+      case PI_LOW:
+         syslog(LOG_INFO, "Restarting system");
+         break;
 
    //		    if (execl("/sbin/shutdown", "shutdown", "-r", "now", NULL) == -1)
    //			syslog(LOG_ERR, "'shutdown' program failed to run with error: %d", errno);
 
    // NOTE: Execution will not reach here if 'execl()' succeeds
-   //	}
+   }
 
-   exit(EXIT_SUCCESS);
+   //exit(EXIT_SUCCESS);
 }

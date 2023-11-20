@@ -26,7 +26,7 @@ make install
 # download pibuttonpower
 echo ""
 echo "= Cloning pibuttonpower"
-/usr/bin/git clone git://github.com/edlins/pibuttonpower /usr/local/src/pibuttonpower
+/usr/bin/git clone https://github.com/edlins/pibuttonpower /usr/local/src/pibuttonpower
 
 # build and install pibuttonpower
 cd /usr/local/src/pibuttonpower

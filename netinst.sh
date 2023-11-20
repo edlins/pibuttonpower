@@ -11,10 +11,10 @@ echo "= Adding iomem=relaxed"
 sed -i '1{s/$/ iomem=relaxed/}' /boot/cmdline.txt
 cat /boot/cmdline.txt
 
-# install sudo make g++ python3-pip
+# install sudo make g++ python3-pip unzip
 echo ""
-echo "= Adding sudo make g++ python3-pip"
-/usr/bin/apt-get -y --no-install-recommends install sudo make g++ python3-pip
+echo "= Adding sudo make g++ python3-pip unzip"
+/usr/bin/apt-get -y --no-install-recommends install sudo make g++ python3-pip unzip
 
 # download, unzip, build, and install pigpio
 wget https://github.com/joan2937/pigpio/archive/master.zip
